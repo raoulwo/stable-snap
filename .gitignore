@@ -1,0 +1,75 @@
+# ---------------------
+# Python / Lambda
+# ---------------------
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+.env
+.env.*
+.venv/
+.venv*/
+
+# Bytecode cache
+.idea/
+
+# pip installs
+python-packages/
+*.zip
+
+# ---------------------
+# React (frontend/)
+# ---------------------
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
+
+# ---------------------
+# IntelliJ / PyCharm
+# ---------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+*.swp
+
+# ---------------------
+# Visual Studio Code
+# ---------------------
+.vscode/
+.history/
+*.code-workspace
+
+# ---------------------
+# OS-Spezifisch
+# ---------------------
+.DS_Store
+Thumbs.db
+
+# ---------------------
+# Logs & Dumps
+# ---------------------
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# ---------------------
+# Test / Coverage / Reports
+# ---------------------
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+test-results/
