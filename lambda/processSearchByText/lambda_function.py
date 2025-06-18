@@ -4,19 +4,17 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
 # Config
+host = 'search-opensearch-stablesnap-5tqvaof2f5me6wuwz5xlbop2su.eu-central-1.es.amazonaws.com'
+index_name = "stablesnap-index"
 region = "eu-central-1"
-service = "es"
-host = 'search-search-stablesnap-dev-g4zn3qof7ucg6qy7izlimgeota.eu-central-1.es.amazonaws.com'
-index_name = "stablesnap-images"
 s3_bucket = "stablesnap-upload-images"
-S3_URL_EXPIRATION_IN_SECONDS = 300
 
 credentials = boto3.Session().get_credentials()
 awsauth = AWS4Auth(
     credentials.access_key,
     credentials.secret_key,
     region,
-    service,
+    "es",
     session_token=credentials.token
 )
 
@@ -32,35 +30,71 @@ s3_client = boto3.client("s3")
 bedrock = boto3.client("bedrock-runtime")
 
 
-def extract_keywords_from_claude(query):
+def build_opensearch_query_with_ai(query: str):
     prompt = (
-        f"Human: Extract relevant visual tags (like AWS Rekognition would) from the following sentence. "
-        f"Only return a JSON list of strings. No explanations. Sentence: \"{query}\"\n\nAssistant:"
-    )
+        f"Human: You are a helpful assistant that translates natural language image search queries into OpenSearch JSON queries.\n"
+        f"\n"
+        f"    Instructions:\n"
+        f"    - Only use the field \"tags\"\n"
+        f"    - Use 'must' for included terms and 'must_not' for excluded ones\n"
+        f"    - Use 'match' only\n"
+        f"    - Return ONLY valid JSON. No text.\n"
+        f"\n"
+        f"    Examples:\n"
+        f"\n"
+        f"    Query: \"bulldozer without person\"\n"
+        f"    Return:\n"
+        f"    {{\n"
+        f"      \"query\": {{\n"
+        f"        \"bool\": {{\n"
+        f"          \"must\": [{{ \"match\": {{ \"tags\": \"bulldozer\" }} }}],\n"
+        f"          \"must_not\": [{{ \"match\": {{ \"tags\": \"person\" }} }}]\n"
+        f"        }}\n"
+        f"      }}\n"
+        f"    }}\n"
+        f"\n"
+        f"    Query: \"person with bulldozer\"\n"
+        f"    Return:\n"
+        f"    {{\n"
+        f"      \"query\": {{\n"
+        f"        \"bool\": {{\n"
+        f"          \"must\": [\n"
+        f"            {{ \"match\": {{ \"tags\": \"person\" }} }},\n"
+        f"            {{ \"match\": {{ \"tags\": \"bulldozer\" }} }}\n"
+        f"          ]\n"
+        f"        }}\n"
+        f"      }}\n"
+        f"    }}\n"
+        f"\n"
+        f"    Now create the JSON query for: \"{query}\"\n"
+        f"\n"
+        f"    Assistant:")
 
     body = {
         "prompt": prompt,
-        "max_tokens_to_sample": 100,
+        "max_tokens_to_sample": 300,
     }
 
-    response = bedrock.invoke_model(
-        modelId="anthropic.claude-instant-v1",
-        contentType="application/json",
-        accept="application/json",
-        body=json.dumps(body)
-    )
-
-    result = json.loads(response["body"].read())
     try:
-        tags = json.loads(result["completion"])
-        if isinstance(tags, list):
-            return tags
+        response = bedrock.invoke_model(
+            modelId="anthropic.claude-instant-v1",
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps(body)
+        )
+
+        result = json.loads(response["body"].read())
+        text = result.get("completion", "").strip()
+        print(f"[DEBUG] Model raw response: {text}")
+
+        parsed = json.loads(text)
+        if isinstance(parsed, dict) and "query" in parsed:
+            return parsed
         else:
-            print("[WARN] Claude response not a list:", result["completion"])
-            return []
+            raise ValueError(f"[WARN] Invalid OpenSearch query format from Claude: {parsed}")
     except Exception as e:
-        print("[ERROR] Failed to parse Claude output:", e)
-        return []
+        print(f"[ERROR] Failed to parse Claude output: {e}")
+        return None
 
 
 def lambda_handler(event, context):
@@ -70,28 +104,24 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "body": json.dumps({"error": "Missing query parameter 'q'"})
         }
+
     print(f"[INFO] Search query: {query}")
 
-    tags = extract_keywords_from_claude(query)
-    if not tags:
-        print("[WARN] Claude returned no keywords. Using as fallback the search query.")
-        tags = [query]
-    else:
-        print(f"[INFO] Extracted keywords from Claude: {tags}")
-
-
-    body = {
-        "query": {
-            "multi_match": {
-                "query": query,
-                "fields": ["description", "tags"],
-                "fuzziness": "AUTO"
+    opensearch_body = build_opensearch_query_with_ai(query)
+    if opensearch_body is None:
+        print("[WARN] Fallback to multi_match on 'tags'")
+        opensearch_body = {
+            "query": {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["tags"],
+                    "fuzziness": "AUTO"
+                }
             }
         }
-    }
 
     try:
-        response = client.search(index=index_name, body=body)
+        response = client.search(index=index_name, body=opensearch_body)
         hits = response["hits"]["hits"]
         print(f"[INFO] Found {len(hits)} matching documents.")
     except Exception as e:
@@ -106,13 +136,18 @@ def lambda_handler(event, context):
         doc = hit["_source"]
         image_id = doc.get("image_id", "N/A")
         tags = doc.get("tags", [])
+
+        if not image_id or not tags:
+            print(f"[WARN] Document {i + 1} missing image_id or tags, skipping.")
+            continue
+
         print(f"[MATCH {i + 1}] image_id: {image_id} | tags: {tags}")
 
         try:
             url = s3_client.generate_presigned_url(
                 "get_object",
                 Params={"Bucket": s3_bucket, "Key": doc["url_key"]},
-                ExpiresIn=S3_URL_EXPIRATION_IN_SECONDS
+                ExpiresIn=500
             )
         except Exception as e:
             print(f"[ERROR] Failed to create S3 URL for image_id {image_id}: {e}")
@@ -122,7 +157,6 @@ def lambda_handler(event, context):
             "image_id": image_id,
             "timestamp": doc.get("timestamp", ""),
             "url": url,
-            "description": doc.get("description", ""),
             "tags": tags
         })
 

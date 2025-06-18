@@ -5,17 +5,16 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
 # Config
-host = 'search-search-stablesnap-dev-g4zn3qof7ucg6qy7izlimgeota.eu-central-1.es.amazonaws.com'
-index_name = "stablesnap-images"
+host = 'search-opensearch-stablesnap-5tqvaof2f5me6wuwz5xlbop2su.eu-central-1.es.amazonaws.com'
+index_name = "stablesnap-index"
 region = "eu-central-1"
-service = "es"
 
 credentials = boto3.Session().get_credentials()
 awsauth = AWS4Auth(
     credentials.access_key,
     credentials.secret_key,
     region,
-    service,
+    "es",
     session_token=credentials.token
 )
 
@@ -28,8 +27,6 @@ client = OpenSearch(
 )
 
 rekognition = boto3.client("rekognition")
-bedrock = boto3.client("bedrock-runtime")
-
 
 def create_index_if_not_exists():
     try:
@@ -42,8 +39,7 @@ def create_index_if_not_exists():
                 "properties": {
                     "image_id": {"type": "keyword"},
                     "timestamp": {"type": "date"},
-                    "tags": {"type": "keyword"},
-                    "description": {"type": "text"},
+                    "tags": {"type": "text"},
                     "confidence": {
                         "type": "nested",
                         "properties": {
@@ -58,22 +54,6 @@ def create_index_if_not_exists():
         print(f"[INFO] Index '{index_name}' created successfully.")
     except Exception as e:
         print(f"[ERROR] Failed to check/create index: {e}")
-
-
-def generate_description(tags):
-    prompt = (f"Human: Generate a short, meaningful image caption from the following labels: {', '.join(tags)}. "
-              f"Generate only the description! No explanations! \n\nAssistant:")
-    response = bedrock.invoke_model(
-        modelId="anthropic.claude-instant-v1",
-        contentType="application/json",
-        accept="application/json",
-        body=json.dumps({
-            "prompt": prompt,
-            "max_tokens_to_sample": 100
-        })
-    )
-    response_body = json.loads(response["body"].read())
-    return response_body.get("completion", "").strip()
 
 
 def lambda_handler(event, context):
@@ -109,17 +89,14 @@ def lambda_handler(event, context):
         tags.append(name)
         confidence.append({"tag": name, "value": conf})
 
-    description = generate_description(tags)
 
     print(f"[INFO] Tags: {tags}")
-    print(f"[INFO] Description: {description}")
 
     document = {
         "image_id": image_id,
         "timestamp": timestamp,
         "tags": tags,
         "confidence": confidence,
-        "description": description,
         "url_key": url_key
     }
 
