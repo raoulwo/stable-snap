@@ -7,7 +7,7 @@ const SelectedImageDisplay: React.FC = () => {
             <b>SelectedImageDisplay</b>
             This shows a proper and large preview of the currently selected image
             // import reactLogo from './assets/react.svg'
-            <img src="/src/assets/construction_progress-start.jpg" />
+            <img src="/construction_progress-start.jpg" />
         </div>
     );
 }
