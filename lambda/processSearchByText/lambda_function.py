@@ -1,5 +1,6 @@
-import boto3
 import json
+
+import boto3
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
@@ -72,7 +73,7 @@ def build_opensearch_query_with_ai(query: str):
 
     body = {
         "prompt": prompt,
-        "max_tokens_to_sample": 300,
+        "max_tokens_to_sample": 500,
     }
 
     try:
@@ -91,34 +92,36 @@ def build_opensearch_query_with_ai(query: str):
         if isinstance(parsed, dict) and "query" in parsed:
             return parsed
         else:
-            raise ValueError(f"[WARN] Invalid OpenSearch query format from Claude: {parsed}")
+            raise ValueError(f"[WARN] Invalid OpenSearch query format from model: {parsed}")
     except Exception as e:
-        print(f"[ERROR] Failed to parse Claude output: {e}")
+        print(f"[ERROR] Failed to parse model output: {e}")
         return None
 
 
 def lambda_handler(event, context):
     query = event.get("queryStringParameters", {}).get("q", "").strip()
+
     if not query:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "Missing query parameter 'q'"})
-        }
-
-    print(f"[INFO] Search query: {query}")
-
-    opensearch_body = build_opensearch_query_with_ai(query)
-    if opensearch_body is None:
-        print("[WARN] Fallback to multi_match on 'tags'")
+        print("[INFO] Empty query – return all documents")
         opensearch_body = {
-            "query": {
-                "multi_match": {
-                    "query": query,
-                    "fields": ["tags"],
-                    "fuzziness": "AUTO"
+            "query": {"match_all": {}},
+            "sort": [{"timestamp": {"order": "desc"}}]
+        }
+    else:
+        print(f"[INFO] Search query: '{query}'")
+        opensearch_body = build_opensearch_query_with_ai(query)
+        if opensearch_body is None:
+            print("[WARN] Fallback to multi_match on 'tags'")
+            opensearch_body = {
+                "query": {
+                    "multi_match": {
+                        "query": query,
+                        "fields": ["tags"],
+                        "fuzziness": "AUTO"
+                    }
                 }
             }
-        }
+        opensearch_body["sort"] = [{"_score": {"order": "desc"}}, {"timestamp": {"order": "desc"}}]
 
     try:
         response = client.search(index=index_name, body=opensearch_body)

@@ -1,6 +1,6 @@
-import boto3
-import json
 from datetime import datetime
+
+import boto3
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 

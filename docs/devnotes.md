@@ -12,10 +12,13 @@ Info:
 - `stablesnap-search-api`
     - HTTP API
     - Invoke URL: `https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com`
-    - Example: GET `https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com/search?q=bulldozer`
+    - GET Endpoint `/search`
+    - Example 1: GET `https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com/search?q=bulldozer`
+    - Example 2: GET `https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com/search`
 - `stablesnap-upload-api`
     - HTTP API
     - Invoke URL: `https://3v58kycltg.execute-api.eu-central-1.amazonaws.com`
+    - POST Endpoint `/upload-url`
     - Example: POST `https://3v58kycltg.execute-api.eu-central-1.amazonaws.com/upload-url`
 
 **AWS Amplify:**
@@ -54,6 +57,17 @@ Info:
 - Host: `search-opensearch-stablesnap-5tqvaof2f5me6wuwz5xlbop2su.eu-central-1.es.amazonaws.com`
 - Public access BUT Access policy
 - Access Policy: only `processUploadedImage-role-h6phvayi` & `processSearchByText-role-5l94rlbo` have access (via ARN)
+- Index-Mapping:
+
+| Field        | Type      | Description                                         |
+|--------------|-----------|-----------------------------------------------------|
+| `image_id`   | `keyword` | Unique image identifier (S3 path).                  |
+| `timestamp`  | `date`    | Capture or processing time.                         |
+| `tags`       | `text`    | List of image labels.                               |
+| `confidence` | `nested`  | List of `{ tag, value }` with detection confidence. |
+| ├─ `tag`     | `keyword` | Label name (e.g., "person").                        |
+| └─ `value`   | `float`   | Confidence score for the tag.                       |
+| `url_key`    | `keyword` | Image key in S3; used to generate pre-signed URLs.  |
 
 **EventBridge Rules:**
 
@@ -98,3 +112,4 @@ Info:
     - `Amazon_EventBridge_Invoke_Lambda_ProcessUploadedImage`
     - Policies.
         - `lambda:InvokeFunction`
+
