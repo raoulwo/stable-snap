@@ -1,27 +1,28 @@
-import React from "react";
+import React, {useEffect} from "react";
 import SelectableImageTile from "@/components/SelectableImageTile.tsx";
+import { useAppContext } from "@/context/AppContext.tsx";
+import type {SearchResult} from "@/lib/types";
 
 const SelectableImageGrid: React.FC = () => {
+    const { searchResults, isLoadingImages } = useAppContext();
+
+    useEffect(() => {
+        console.log("new results:");
+        console.log(searchResults);
+    }, [searchResults]);
+
     return (
-        <div id="SelectableImageGrid">
-            <div className="grid grid-cols-3 md:grid-cols-4 md:grid-cols-5 gap-2.5">
-                <SelectableImageTile imageId="id1" />
-                <SelectableImageTile imageId="id2" />
-                <SelectableImageTile imageId="id3" />
-                <SelectableImageTile imageId="id4" />
-                <SelectableImageTile imageId="id5" />
-                <SelectableImageTile imageId="id6" />
-                <SelectableImageTile imageId="id7" />
-                <SelectableImageTile imageId="id8" />
-                <SelectableImageTile imageId="id9" />
-                <SelectableImageTile imageId="id10" />
-                <SelectableImageTile imageId="id11" />
-                <SelectableImageTile imageId="id12" />
-                <SelectableImageTile imageId="id13" />
-                <SelectableImageTile imageId="id14" />
-                <SelectableImageTile imageId="id15" />
+        isLoadingImages ? (
+            <div>Loading</div>
+        ) : (
+            <div id="SelectableImageGrid">
+                <div className="grid grid-cols-3 md:grid-cols-4 md:grid-cols-5 gap-2.5">
+                    {searchResults.map((searchResult:SearchResult) => (
+                        <SelectableImageTile imageURL={searchResult.url} imageId={searchResult.imageId} />
+                    ))}
+                </div>
             </div>
-        </div>
+        )
     );
 }
 

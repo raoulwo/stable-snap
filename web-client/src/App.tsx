@@ -1,13 +1,10 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import { useEffect } from 'react';
 import './App.css'
 import ProjectPage from "@/components/ProjectPage.tsx";
 import { searchImages, searchInitialImages } from './lib/api';
+import AppProvider from "@/context/AppContext.tsx";
 
 function App() {
-  // const [count, setCount] = useState(0)
 
   useEffect(() => {
     const run = async () => {
@@ -31,7 +28,9 @@ function App() {
 
   return (
     <>
-      <ProjectPage />
+      <AppProvider>
+        <ProjectPage />
+      </AppProvider>
     </>
   )
 }
