@@ -1,7 +1,7 @@
 import type { SearchResponse, SearchResult } from './types';
 
 const SEARCH_API_INVOKE_URL = 'https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com';
-const UPLOAD_API_INVOKE_URL = 'https://3v58kycltg.execute-api.eu-central-1.amazonaws.com';
+// const UPLOAD_API_INVOKE_URL = 'https://3v58kycltg.execute-api.eu-central-1.amazonaws.com';
 
 export async function searchInitialImages(): Promise<{
   imageResults: SearchResult[];
