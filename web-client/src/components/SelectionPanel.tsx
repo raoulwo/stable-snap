@@ -2,13 +2,13 @@ import React, {useState} from "react";
 import SelectableImageGrid from "@/components/SelectableImageGrid.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import { useAppContext } from "@/context/AppContext.tsx";
+import { Badge } from "@/components/ui/badge.tsx";
 
 const SelectionPanel: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const { handleQuerySearchOfImages } = useAppContext();
+    const { handleQuerySearchOfImages, searchTags } = useAppContext();
 
     const searchImagesWithQuery = async() => {
-        console.log(searchQuery);
         handleQuerySearchOfImages(searchQuery);
     }
 
@@ -22,6 +22,14 @@ const SelectionPanel: React.FC = () => {
                     onChange={(event) => setSearchQuery(event.target.value)}
                 />
                 <Button onClick={() => {searchImagesWithQuery()}}>Search</Button>
+            </div>
+            <div id="tags-not-a-single-component--selection-panel">
+                <strong className="mr-2">Available tags: </strong>
+                {Array.from(searchTags).map((searchTag: string) => (
+                    <Badge variant="default" className="p-1 m-0.5">
+                        {searchTag}
+                    </Badge>
+                ))}
             </div>
             <SelectableImageGrid />
         </div>

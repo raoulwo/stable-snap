@@ -19,11 +19,17 @@ const SelectableImageGrid: React.FC = () => {
             </div>
         ) : (
             <div id="SelectableImageGrid">
-                <div className="grid grid-cols-3 md:grid-cols-4 md:grid-cols-5 gap-2.5">
-                    {searchResults.map((searchResult:SearchResult) => (
-                        <SelectableImageTile imageURL={searchResult.url} imageId={searchResult.imageId} />
-                    ))}
-                </div>
+                {searchResults.length <= 0 ? (
+                    <div className="flex items-center justify-center">
+                        <strong className="mt-6">No images were found with this search term</strong>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 md:grid-cols-4 gap-2.5 place-items-center">
+                        {searchResults.map((searchResult:SearchResult) => (
+                            <SelectableImageTile imageURL={searchResult.url} imageId={searchResult.imageId} />
+                        ))}
+                    </div>
+                )}
             </div>
         )
     );
