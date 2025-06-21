@@ -9,11 +9,11 @@ const ProjectPage: React.FC = () => {
     }, []);
 
     return (
-        <div className="flex" id="ProjectPage">
-            <div className="w-1/3">
+        <div className="flex flex-col md:flex-row" id="ProjectPage">
+            <div className="w-full md:w-1/2 lg:w-2/5 p-2 mr-4 lg:mr-6 xl:mr-8">
                 <SelectedImageDisplay />
             </div>
-            <div className="w-2/3">
+            <div className="w-full md:w-1/2 lg:w-3/5 p-2">
                 <SelectionPanel/>
             </div>
         </div>
