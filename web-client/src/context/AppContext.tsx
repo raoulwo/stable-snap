@@ -1,7 +1,7 @@
 import type {FocusedImage} from "@/lib/types/focused-image.ts";
 import type {SearchResult} from "@/lib/types";
 import {createContext, useContext, useEffect, useState} from "react";
-import { searchInitialImages } from '@/lib/api';
+import { searchInitialImages, searchImages } from '@/lib/api';
 
 type AppContextType = {
     isLoadingImages: boolean;
@@ -13,6 +13,7 @@ type AppContextType = {
     setSearchResults: (newResults: SearchResult[]) => void;
     searchTags: Set<string>;
     setSearchTags: (newSearchTags: Set<string>) => void;
+    handleQuerySearchOfImages: (query: string) => Promise<void>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -32,9 +33,6 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
             const results: {imageResults: SearchResult[]; imageTags: Set<string>} = await searchInitialImages();
             setSearchResults(results.imageResults);
             setSearchTags(results.imageTags);
-            console.log(results);
-            console.log(results.imageResults);
-            console.log(results.imageTags);
             setIsLoadingImages(false);
         } catch (error) {
             console.error("Error in AppContext: "+error);
@@ -44,6 +42,18 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
 
     const resetFocusedImage = ():void => {
         setFocusedImage({ imageURL: "", imageId: "" });
+    }
+
+    const handleQuerySearchOfImages = async (query: string)=> {
+        try {
+            setIsLoadingImages(true);
+            const { imageResults } = await searchImages(query);
+            setSearchResults(imageResults);
+            setIsLoadingImages(false);
+        } catch(error) {
+            console.error("Error fetching images in AppContext: ", error);
+            setIsLoadingImages(false);
+        }
     }
 
     return (
@@ -58,6 +68,7 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
                 setSearchResults,
                 searchTags,
                 setSearchTags,
+                handleQuerySearchOfImages,
             }}
         >
             {children}
