@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './App.css'
 import ProjectPage from "@/components/ProjectPage.tsx";
-import { searchImages, searchInitialImages } from './lib/api';
+import { searchImages, searchInitialImages, uploadImage } from './lib/api';
 import AppProvider from "@/context/AppContext.tsx";
 
 function App() {
@@ -21,6 +21,13 @@ function App() {
       } catch (error) {
         console.error(error);
       }
+
+      try {
+        await uploadImage();
+      } catch (error) {
+        console.error(error);
+      }
+
     };
 
     run();

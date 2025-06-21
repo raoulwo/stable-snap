@@ -1,3 +1,4 @@
 export interface UploadUrlResult {
-    foo: string;
+    upload_url: string;
+    image_id: string;
 }

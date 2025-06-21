@@ -1,7 +1,7 @@
-import type { SearchResponse, SearchResult } from './types';
+import type { SearchResponse, SearchResult, UploadUrlResult } from './types';
 
 const SEARCH_API_INVOKE_URL = 'https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com';
-// const UPLOAD_API_INVOKE_URL = 'https://3v58kycltg.execute-api.eu-central-1.amazonaws.com';
+const UPLOAD_API_INVOKE_URL = 'https://3v58kycltg.execute-api.eu-central-1.amazonaws.com';
 
 export async function searchInitialImages(): Promise<{
   imageResults: SearchResult[];
@@ -32,6 +32,11 @@ export async function searchImages(query: string): Promise<{
   };
 }
 
+export async function uploadImage(): Promise<void> {
+  const uploadUrlResult = await fetchImageUploadUrl();
+  console.log('upload image result', uploadUrlResult);
+}
+
 async function fetchImages(query?: string): Promise<SearchResult[]> {
   const url = new URL('/search', SEARCH_API_INVOKE_URL);
   if (query) {
@@ -49,6 +54,16 @@ async function fetchImages(query?: string): Promise<SearchResult[]> {
     url: image.url,
     tags: image.tags,
   }));
+}
+
+async function fetchImageUploadUrl(): Promise<UploadUrlResult> {
+  const url = `${UPLOAD_API_INVOKE_URL}/upload-url`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+  });
+
+  return handleResponse<UploadUrlResult>(response);
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
