@@ -4,7 +4,7 @@
 import { useEffect } from 'react';
 import './App.css'
 import ProjectPage from "@/components/ProjectPage.tsx";
-import { searchInitialImages } from './lib/api';
+import { searchImages, searchInitialImages } from './lib/api';
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -13,6 +13,13 @@ function App() {
     const run = async () => {
       try {
         const results = await searchInitialImages();
+        console.log(results);
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        const results = await searchImages("building");
         console.log(results);
       } catch (error) {
         console.error(error);
