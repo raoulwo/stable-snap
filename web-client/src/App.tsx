@@ -11,12 +11,13 @@ import ProjectPage from "@/components/ProjectPage.tsx";
 import { searchImages, searchInitialImages, uploadImage } from './lib/api';
 import AppProvider from "@/context/AppContext.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import { Badge } from "@/components/ui/badge.tsx";
 // TAKEN FROM START 1
 import { useAuthenticator } from '@aws-amplify/ui-react';
 // TAKEN FROM END 1
 function App() {
 // TAKEN FROM START 1
-  const { signOut } = useAuthenticator();
+  const { user, signOut } = useAuthenticator();
 // TAKEN FROM END 1
   useEffect(() => {
     const run = async () => {
@@ -47,6 +48,7 @@ function App() {
 // TAKEN FROM START 1
   return (
       <>
+        <Badge>Hello, {user?.signInDetails?.loginId}!</Badge>
         <Button onClick={signOut}>Sign out</Button>
         <AppProvider>
           <ProjectPage/>
