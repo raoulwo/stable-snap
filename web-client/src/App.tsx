@@ -1,11 +1,23 @@
+/*
+TAKEN FROM 1
+
+The lines of code for setting up Amplify Authenticator powered by Amazon Cognito were taken from the following source:
+https://docs.amplify.aws/react/start/quickstart/
+*/
+
 import { useEffect } from 'react';
 import './App.css'
 import ProjectPage from "@/components/ProjectPage.tsx";
 import { searchImages, searchInitialImages, uploadImage } from './lib/api';
 import AppProvider from "@/context/AppContext.tsx";
-
+import {Button} from "@/components/ui/button.tsx";
+// TAKEN FROM START 1
+import { useAuthenticator } from '@aws-amplify/ui-react';
+// TAKEN FROM END 1
 function App() {
-
+// TAKEN FROM START 1
+  const { signOut } = useAuthenticator();
+// TAKEN FROM END 1
   useEffect(() => {
     const run = async () => {
       try {
@@ -32,14 +44,16 @@ function App() {
 
     run();
   }, []);
-
+// TAKEN FROM START 1
   return (
-    <>
-      <AppProvider>
-        <ProjectPage />
-      </AppProvider>
-    </>
+      <>
+        <Button onClick={signOut}>Sign out</Button>
+        <AppProvider>
+          <ProjectPage/>
+        </AppProvider>
+      </>
   )
+// TAKEN FROM END 1
 }
 
 export default App
