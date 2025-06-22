@@ -20,6 +20,12 @@ Info:
     - Invoke URL: `https://3v58kycltg.execute-api.eu-central-1.amazonaws.com`
     - POST Endpoint `/upload-url`
     - Example: POST `https://3v58kycltg.execute-api.eu-central-1.amazonaws.com/upload-url`
+- `stablesnap-delete-api`
+    - HTTP API
+    - Invoke URL: `https://3pr2btm7f9.execute-api.eu-central-1.amazonaws.com`
+    - DELETE Endpoint `/image/{id}`
+    - Example: DELETE
+      `https://3pr2btm7f9.execute-api.eu-central-1.amazonaws.com/image/s3://stablesnap-upload-images/app-hauptkamera_00Zne_2021-04-29_09_45_54_496.jpg`
 
 **AWS Amplify:**
 
@@ -49,6 +55,8 @@ Info:
     - `arn:aws:lambda:eu-central-1:605134439536:function:processSearchByText`
 - `generatePresignedUploadUrl`
     - `arn:aws:lambda:eu-central-1:605134439536:function:generatePresignedUploadUrl`
+- `deleteImageById`
+    - `arn:aws:lambda:eu-central-1:605134439536:function:deleteImageById`
 
 **OpenSearch:**
 
@@ -56,7 +64,8 @@ Info:
 - Index: `stablesnap-index`
 - Host: `search-opensearch-stablesnap-5tqvaof2f5me6wuwz5xlbop2su.eu-central-1.es.amazonaws.com`
 - Public access BUT Access policy
-- Access Policy: only `processUploadedImage-role-h6phvayi` & `processSearchByText-role-5l94rlbo` have access (via ARN)
+- Access Policy: only `processUploadedImage-role-h6phvayi` & `processSearchByText-role-5l94rlbo` &
+  `deleteImageById-role-qohopvzm` have access (via ARN)
 - Index-Mapping:
 
 | Field        | Type      | Description                                         |
@@ -108,6 +117,13 @@ Info:
     - `generatePresignedUploadUrl-role-z6zxs0nz`
     - Policies:
         - s3:PutObject
+- Lambda::`deleteImageById`
+    - `deleteImageById-role-qohopvzm`
+    - Polices:
+        - s3:DeleteObject
+        - es:ESHttpPost
+        - es:ESHttpGet
+        - es:ESHttpDelete
 - EventBridge::`OnS3ImageUpload`
     - `Amazon_EventBridge_Invoke_Lambda_ProcessUploadedImage`
     - Policies.

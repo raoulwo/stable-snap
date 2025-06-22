@@ -8,7 +8,7 @@ https://docs.amplify.aws/react/start/quickstart/
 import { useEffect } from 'react';
 import './App.css'
 import ProjectPage from "@/components/ProjectPage.tsx";
-import { searchImages, searchInitialImages, uploadImage } from './lib/api';
+import { searchImages, searchInitialImages } from './lib/api';
 import AppProvider from "@/context/AppContext.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -23,24 +23,17 @@ function App() {
     const run = async () => {
       try {
         const results = await searchInitialImages();
-        console.log(results);
+        console.info(results.imageResults.length + " Results were fetched.");
       } catch (error) {
         console.error(error);
       }
 
       try {
         const results = await searchImages("building");
-        console.log(results);
+        console.info(results.imageResults.length + " Results were fetched.");
       } catch (error) {
         console.error(error);
       }
-
-      try {
-        await uploadImage();
-      } catch (error) {
-        console.error(error);
-      }
-
     };
 
     run();

@@ -1,13 +1,33 @@
-import React from "react";
-// import ConstructionBegin from '../assets/construction_progress-start.jpg';
+import React, {useEffect, useState} from "react";
+import { useAppContext } from "@/context/AppContext.tsx";
 
 const SelectedImageDisplay: React.FC = () => {
+    const { focusedImage } = useAppContext();
+    const [noImageFocused, setNoImageFocused] = useState<boolean>(true);
+
+    useEffect(() => {
+        if(focusedImage.imageId === "" || focusedImage.imageURL === ""){
+            setNoImageFocused(true);
+        }else{
+            setNoImageFocused(false);
+        }
+    }, [focusedImage]);
+
     return (
-        <div id="SelectedImageDisplay">
-            {/*<b>SelectedImageDisplay</b>
-            This shows a proper and large preview of the currently selected image
-            // import reactLogo from './assets/react.svg'*/}
-            <img className="rounded-md shadow-md border-1 border-gray-400" src="/construction_progress-start.jpg" />
+        <div id="SelectedImageDisplay" className="flex items-center justify-center">
+            { noImageFocused ? (
+                <div className="">
+                    <div className="mt-48 font-bold text-xl">No image selected yet</div>
+                    <div className="font-bold text-gray-500">Click on one of the images on the right to focus</div>
+                </div>
+            ) : (
+                <img
+                    className="rounded-md shadow-md border-1 border-gray-400"
+                    id={focusedImage.imageId}
+                    src={focusedImage.imageURL}
+                />
+            )
+            }
         </div>
     );
 }

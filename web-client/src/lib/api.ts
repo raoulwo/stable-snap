@@ -32,9 +32,15 @@ export async function searchImages(query: string): Promise<{
   };
 }
 
-export async function uploadImage(): Promise<void> {
+export async function uploadImage(file: File): Promise<void> {
   const uploadUrlResult = await fetchImageUploadUrl();
-  console.log('upload image result', uploadUrlResult);
+  await fetch(uploadUrlResult.upload_url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type,
+    },
+    body: file
+  });
 }
 
 async function fetchImages(query?: string): Promise<SearchResult[]> {
