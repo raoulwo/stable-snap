@@ -58,12 +58,9 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
     }
 
     const triggerFetchingResults = async () => {
-        console.log("i will wait for 5 seconds now...");
-        //wait for 5 seconds so that backend processed recently uploaded image and then fetch again
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        console.log("waited for 5 seconds, now fetching images");
+        //wait for 15 seconds so that backend processed recently uploaded image and then fetch again
+        await new Promise((resolve) => setTimeout(resolve, 15000));
         initialFetchOfImages();
-        console.log("finished fetching images");
     }
 
     return (
