@@ -26,12 +26,9 @@ const SelectableImageTile = ({ imageId, imageURL = "/construction_progress-middl
         const newSelectedValue = !selected;
         setSelected(newSelectedValue);
         localStorage.setItem(localStorageKey, String(newSelectedValue));
-        console.log("selected clicked");
     }
 
     const handleFocusedImage = (): void => {
-        console.log("when this is clicked, the focused image will be set");
-        console.log("image selected: "+imageURL+" with id:" + imageId);//TODO
         const newFocusImage: FocusedImage = {imageURL: imageURL, imageId: imageId};
         setFocusedImage(newFocusImage);
     }

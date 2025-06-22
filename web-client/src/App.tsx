@@ -10,14 +10,14 @@ function App() {
     const run = async () => {
       try {
         const results = await searchInitialImages();
-        console.log(results);
+        console.info(results.imageResults.length + " Results were fetched.");
       } catch (error) {
         console.error(error);
       }
 
       try {
         const results = await searchImages("building");
-        console.log(results);
+        console.info(results.imageResults.length + " Results were fetched.");
       } catch (error) {
         console.error(error);
       }

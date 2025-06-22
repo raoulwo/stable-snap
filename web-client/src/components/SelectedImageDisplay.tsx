@@ -7,7 +7,6 @@ const SelectedImageDisplay: React.FC = () => {
 
     useEffect(() => {
         if(focusedImage.imageId === "" || focusedImage.imageURL === ""){
-            console.log("Currently, no image is focused; empty values:", focusedImage);
             setNoImageFocused(true);
         }else{
             setNoImageFocused(false);

@@ -1,7 +1,6 @@
 import React, { type ChangeEvent, useState } from "react";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button.tsx";
 import { uploadImage } from "@/lib/api.ts";
 import {CircleCheck, CircleX, CloudUpload, Loader2} from "lucide-react";
@@ -31,7 +30,7 @@ const FileUpload: React.FC = () => {
     try {
       setUploadStatus("loading");
       await uploadImage(selectedFile);
-      console.log(">> successfully uploaded image");
+      console.info("Info: successfully uploaded image");
       setUploadStatus("success");
     } catch (error) {
       console.error("Error in uploading image! ", error);
@@ -41,9 +40,8 @@ const FileUpload: React.FC = () => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     setUploadStatus("idle");
     setSelectedFile(null);
-    console.log(">>line 43");
+    console.info("Info: now triggering fetching of results")
     triggerFetchingResults();
-    console.log(">>line 45");
   };
 
   const renderStatusIcon = () => {
@@ -68,9 +66,8 @@ const FileUpload: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-between items-end mb-2">
+    <div className="flex justify-between items-start mb-4">
       <div className="mr-2">
-        <Label className="mb-2" htmlFor="image">Upload Image</Label>
         <Input className=" border-2 border-gray-400" id="image" type="file" onChange={handleFileChange} />
       </div>
       <Button onClick={handleImageUpload} disabled={uploadStatus !== "ready"}>

@@ -1,35 +1,32 @@
 import React, {useState} from "react";
 import SelectableImageGrid from "@/components/SelectableImageGrid.tsx";
+import SearchTags from "@/components/SearchTags.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import { useAppContext } from "@/context/AppContext.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
 
 const SelectionPanel: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const { handleQuerySearchOfImages, searchTags } = useAppContext();
+    const { handleQuerySearchOfImages, handleFetchOfAllImages } = useAppContext();
 
     const searchImagesWithQuery = async() => {
+        console.info("Info: Fetching images with this search query: ", searchQuery);
         handleQuerySearchOfImages(searchQuery);
+    }
+
+    const searchImagesWithNoQuery = async() => {
+        console.info("Fetching images without a query to list all images");
+        handleFetchOfAllImages();
     }
 
     return (
         <div id="SelectionPanel">
-            <div className="flex justify-end mb-2">
-                <input
-                    type="text"
-                    className="border-2 border-gray-400 rounded-md p-1 mr-2 w-75"
-                    placeholder="Bulldozer, TODO: think about tags"
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                />
-                <Button onClick={() => {searchImagesWithQuery()}}>Search</Button>
-            </div>
-            <div id="tags-not-a-single-component--selection-panel">
-                <strong className="mr-2">Available tags: </strong>
-                {Array.from(searchTags).map((searchTag: string) => (
-                    <Badge variant="default" className="p-1 m-0.5">
-                        {searchTag}
-                    </Badge>
-                ))}
+            <div className="flex justify-end mb-4">
+                {/* search query is set inside search tags component */}
+                <SearchTags setSearchQuery={setSearchQuery}/>
+                <Button className="mx-2" onClick={() => {searchImagesWithQuery()}}>Search</Button>
+                <Button
+                    onClick={() => {searchImagesWithNoQuery()}}
+                    variant="outline">List all images</Button>
             </div>
             <SelectableImageGrid />
         </div>
