@@ -1,5 +1,7 @@
 import {useState, useEffect} from "react";
 import {Check, Loader2} from "lucide-react";
+import type {FocusedImage} from "@/lib/types/focused-image.ts";
+import { useAppContext } from "@/context/AppContext.tsx";
 
 interface ImageProps {
     imageId: string;
@@ -11,23 +13,27 @@ const SelectableImageTile = ({ imageId, imageURL = "/construction_progress-middl
     const [loading] = useState(false);
     const [selected, setSelected] = useState(false);
     const localStorageKey = `Stable-Snap-${imageId}`;
+    const { setFocusedImage } = useAppContext();
 
     // Checks localStorage for a previously saved selection state for this specific image and restores selection state
     useEffect(() => {
-        const stored = localStorage.getItem(localStorageKey);
-        setSelected(stored === "true");
+        const isImageAlreadyStoredInLocalStorage = localStorage.getItem(localStorageKey);
+        setSelected(isImageAlreadyStoredInLocalStorage === "true");
     }, []);
 
     const handleSelectionToggle = (event:any):void => {
         event.stopPropagation();
-        setSelected(!selected);
-        //TODO
+        const newSelectedValue = !selected;
+        setSelected(newSelectedValue);
+        localStorage.setItem(localStorageKey, String(newSelectedValue));
         console.log("selected clicked");
     }
 
     const handleFocusedImage = (): void => {
         console.log("when this is clicked, the focused image will be set");
         console.log("image selected: "+imageURL+" with id:" + imageId);//TODO
+        const newFocusImage: FocusedImage = {imageURL: imageURL, imageId: imageId};
+        setFocusedImage(newFocusImage);
     }
 
     return (
