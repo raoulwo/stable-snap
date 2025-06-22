@@ -23,6 +23,12 @@ const SelectionPanel: React.FC = () => {
             <div className="flex justify-end mb-4">
                 {/* search query is set inside search tags component */}
                 <SearchTags setSearchQuery={setSearchQuery}/>
+                <input
+                    type="text"
+                    className="border-2 border-gray-400 rounded-md p-1 ml-2 w-75"
+                    placeholder="Bulldozer or Cat"
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                />
                 <Button className="mx-2" onClick={() => {searchImagesWithQuery()}}>Search</Button>
                 <Button
                     onClick={() => {searchImagesWithNoQuery()}}
