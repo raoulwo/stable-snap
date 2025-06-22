@@ -14,6 +14,7 @@ type AppContextType = {
     searchTags: Set<string>;
     setSearchTags: (newSearchTags: Set<string>) => void;
     handleQuerySearchOfImages: (query: string) => Promise<void>;
+    triggerFetchingResults: () => void;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -56,6 +57,15 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
         }
     }
 
+    const triggerFetchingResults = async () => {
+        console.log("i will wait for 5 seconds now...");
+        //wait for 5 seconds so that backend processed recently uploaded image and then fetch again
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("waited for 5 seconds, now fetching images");
+        initialFetchOfImages();
+        console.log("finished fetching images");
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -69,6 +79,7 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
                 searchTags,
                 setSearchTags,
                 handleQuerySearchOfImages,
+                triggerFetchingResults,
             }}
         >
             {children}
