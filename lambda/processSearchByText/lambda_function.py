@@ -105,7 +105,8 @@ def lambda_handler(event, context):
         print("[INFO] Empty query – return all documents")
         opensearch_body = {
             "query": {"match_all": {}},
-            "sort": [{"timestamp": {"order": "desc"}}]
+            "sort": [{"timestamp": {"order": "desc"}}],
+            "size": 100
         }
     else:
         print(f"[INFO] Search query: '{query}'")
@@ -122,6 +123,7 @@ def lambda_handler(event, context):
                 }
             }
         opensearch_body["sort"] = [{"_score": {"order": "desc"}}, {"timestamp": {"order": "desc"}}]
+        opensearch_body["size"] = 100
 
     try:
         response = client.search(index=index_name, body=opensearch_body)
