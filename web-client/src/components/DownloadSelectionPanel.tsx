@@ -37,18 +37,30 @@ const DownloadSelectionPanel: React.FC = () => {
         try {
             const s3ImageUrl = temporaryTestLink;
             // Fetch the image as a blob
-            const response = await fetch(s3ImageUrl);
-            if (!response.ok) throw new Error('Failed to fetch image');
+            const response = await fetch(s3ImageUrl, {
+                method: 'GET',
+            });
+            console.log("response:");
+            console.log(response.type);
+            console.log(response);
+
+            if (!response.ok){
+                console.log("response.type:", response.type);
+                throw new Error('Failed to fetch image');
+            }
             const imageBlob = await response.blob();
+            console.log(">>52-imageBlog: "+imageBlob);
 
             // Create a zip file
             const zip = new JSZip();
-            const fileName = s3ImageUrl.split('/').pop() || 'image.jpg';
+            const fileName = 'image1.jpg';
             zip.file(fileName, imageBlob);
 
             // Generate and download the zip
             const zipBlob = await zip.generateAsync({ type: 'blob' });
-            saveAs(zipBlob, 'images.zip');
+            console.log(">>61 line");
+            console.log(zipBlob);
+            saveAs(zipBlob, 'images1.zip');
         } catch (error) {
             console.error('Error creating ZIP file:', error);
             alert('There was a problem downloading the image.');
