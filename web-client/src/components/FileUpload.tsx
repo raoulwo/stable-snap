@@ -66,7 +66,7 @@ const FileUpload: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-between items-start mb-4">
+    <div className="flex justify-between items-start mt-2 lg:mt-4">
       <div className="mr-2">
         <Input className=" border-2 border-gray-400" id="image" type="file" onChange={handleFileChange} />
       </div>

@@ -29,9 +29,9 @@ const SearchTags: React.FC<SearchTagsProps> = ({ setSearchQuery }) => {
     const searchTagsArray = [...searchTags];//convert Set to Array. Note: Array will never change
 
     const handleChangedValue = (newSearchQueryValue: string) => {
-        console.log("Current Value:"+newSearchQueryValue);
         setValue(newSearchQueryValue);
         setSearchQuery(newSearchQueryValue);
+        console.info("Info: new Value:"+newSearchQueryValue);
     }
 
     return (
@@ -41,13 +41,13 @@ const SearchTags: React.FC<SearchTagsProps> = ({ setSearchQuery }) => {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-[150px] justify-between"
                 >
-                    {value || "Select Search Tag..."}
+                    {value || "Search Tag ..."}
                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[250px] p-0">
                 <Command>
                     <CommandInput placeholder="Search tag..." />
                     <CommandList>

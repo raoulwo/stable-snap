@@ -20,19 +20,25 @@ const SelectionPanel: React.FC = () => {
 
     return (
         <div id="SelectionPanel">
-            <div className="flex justify-end mb-4">
+            <div className="flex flex-col lg:flex-row justify-between mb-4">
                 {/* search query is set inside search tags component */}
-                <SearchTags setSearchQuery={setSearchQuery}/>
-                <input
-                    type="text"
-                    className="border-2 border-gray-400 rounded-md p-1 ml-2 w-75"
-                    placeholder="Bulldozer or Cat"
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                />
-                <Button className="mx-2" onClick={() => {searchImagesWithQuery()}}>Search</Button>
-                <Button
-                    onClick={() => {searchImagesWithNoQuery()}}
-                    variant="outline">List all images</Button>
+                <div className="flex justify-between">
+                    <SearchTags setSearchQuery={setSearchQuery}/>
+                    <input
+                        type="text"
+                        className="border-2 border-gray-400 rounded-md p-1 ml-2 w-full min-w-30"
+                        placeholder="Bulldozer or Cat"
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                </div>
+                <div className="flex justify-end">
+                    <Button className="mt-2 lg:mt-0 lg:mx-2" onClick={() => {searchImagesWithQuery()}}>Search</Button>
+                    <Button
+                        onClick={() => {searchImagesWithNoQuery()}}
+                        variant="outline"
+                        className="mt-2 ml-2 lg:mt-0 lg:ml-0"
+                    >List all</Button>
+                </div>
             </div>
             <SelectableImageGrid />
         </div>

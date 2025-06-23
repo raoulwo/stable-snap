@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import SelectedImageDisplay from "@/components/SelectedImageDisplay.tsx";
 import SelectionPanel from "@/components/SelectionPanel.tsx";
 import FileUpload from "@/components/FileUpload.tsx";
-// import { Button } from "@/components/ui/button";
+import UserSessionDisplay from "@/components/UserSessionDisplay.tsx";
 
 const ProjectPage: React.FC = () => {
     useEffect(() => {
@@ -13,8 +13,9 @@ const ProjectPage: React.FC = () => {
       <div>
         <div className="flex flex-col md:flex-row" id="ProjectPage">
           <div className="w-full md:w-1/2 lg:w-2/5 p-2 mr-4 lg:mr-6 xl:mr-8">
+              <UserSessionDisplay />
+              <SelectedImageDisplay />
             <FileUpload />
-            <SelectedImageDisplay />
           </div>
           <div className="w-full md:w-1/2 lg:w-3/5 p-2">
             <SelectionPanel/>

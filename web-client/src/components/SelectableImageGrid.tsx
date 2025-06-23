@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import SelectableImageTile from "@/components/SelectableImageTile.tsx";
 import { useAppContext } from "@/context/AppContext.tsx";
 import type {SearchResult} from "@/lib/types";
@@ -6,11 +6,6 @@ import {Loader2} from "lucide-react";
 
 const SelectableImageGrid: React.FC = () => {
     const { searchResults, isLoadingImages } = useAppContext();
-
-    useEffect(() => {
-        console.log("new results:");
-        console.log(searchResults);
-    }, [searchResults]);
 
     return (
         isLoadingImages ? (
