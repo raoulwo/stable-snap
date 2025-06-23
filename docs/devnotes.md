@@ -22,10 +22,10 @@ Info:
     - Example: POST `https://3v58kycltg.execute-api.eu-central-1.amazonaws.com/upload-url`
 - `stablesnap-delete-api`
     - HTTP API
-    - Invoke URL: `https://3pr2btm7f9.execute-api.eu-central-1.amazonaws.com`
-    - DELETE Endpoint `/image/{id}`
+    - Invoke URL: `https://kjgxlwxr82.execute-api.eu-central-1.amazonaws.com`
+    - DELETE Endpoint `/image`
     - Example: DELETE
-      `https://3pr2btm7f9.execute-api.eu-central-1.amazonaws.com/image/s3://stablesnap-upload-images/app-hauptkamera_00Zne_2021-04-29_09_45_54_496.jpg`
+      `https://kjgxlwxr82.execute-api.eu-central-1.amazonaws.com/image?id=s3://stablesnap-upload-images/app-hauptkamera_00Zne_2021-04-29_09_45_54_496.jpg`
 
 **AWS Amplify:**
 

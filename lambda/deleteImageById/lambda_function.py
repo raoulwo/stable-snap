@@ -36,19 +36,22 @@ s3 = boto3.client("s3")
 
 
 def lambda_handler(event, context):
-    raw_id = event.get("pathParameters", {}).get("id", "")
+    raw_id = event.get("queryStringParameters", {}).get("id", "")
     image_id = unquote(raw_id)
 
     print(f"[INFO] Deleting image: '{image_id}'")
 
     if not image_id:
+        print("[ERROR] mage ID is required.")
         return response(400, {"error": "Image ID is required."})
     if not image_id.startswith("s3://"):
+        print("[ERROR] Invalid Image ID format. Must start with 's3://'.")
         return response(400, {"error": "Invalid Image ID format. Must start with 's3://'."})
 
     try:
         bucket, key = image_id.replace("s3://", "", 1).split("/", 1)
     except ValueError:
+        print("[ERROR] Invalid S3 path format.")
         return response(400, {"error": "Invalid S3 path format."})
 
     try:
