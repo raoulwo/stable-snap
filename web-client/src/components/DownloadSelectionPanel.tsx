@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import React from "react";
 import {Button} from "@/components/ui/button.tsx";
 import {ImageDown} from "lucide-react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import {useAppContext} from "@/context/AppContext.tsx";
 const DownloadSelectionPanel: React.FC = () => {
 
     /*const fetchAndZipImages = async () => {
@@ -29,13 +30,13 @@ const DownloadSelectionPanel: React.FC = () => {
         });
     };*/
 
-    const [ temporaryTestLink, setTemporaryTestLink ] = useState<string>("No-Link");
+    const { focusedImage } = useAppContext();
 
     const handleDownloadZip = async () => {
         console.log("I am tring to download this file:");
-        console.log(temporaryTestLink);
+        console.log(focusedImage.imageURL);
         try {
-            const s3ImageUrl = temporaryTestLink;
+            const s3ImageUrl = focusedImage.imageURL;
             // Fetch the image as a blob
             const response = await fetch(s3ImageUrl, {
                 method: 'GET',
@@ -75,14 +76,14 @@ const DownloadSelectionPanel: React.FC = () => {
                 onClick={handleDownloadZip}
             >
                 <ImageDown />
-                Download selection
+                Download this image
             </Button>
-            <input
+            {/*<input
                 type="text"
                 className="border-2 border-gray-400 rounded-md p-1 ml-2 w-full min-w-30"
                 placeholder="Bulldozer or Cat"
                 onChange={(event) => setTemporaryTestLink(event.target.value)}
-            />
+            />*/}
         </div>
     );
 }
