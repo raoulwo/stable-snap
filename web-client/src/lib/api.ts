@@ -2,7 +2,7 @@ import type { SearchResponse, SearchResult, UploadUrlResult } from './types';
 
 const SEARCH_API_INVOKE_URL = 'https://a7bcbzq751.execute-api.eu-central-1.amazonaws.com';
 const UPLOAD_API_INVOKE_URL = 'https://3v58kycltg.execute-api.eu-central-1.amazonaws.com';
-const DELETE_API_INVOKE_URL = 'https://3pr2btm7f9.execute-api.eu-central-1.amazonaws.com';
+const DELETE_API_INVOKE_URL = 'https://kjgxlwxr82.execute-api.eu-central-1.amazonaws.com';
 
 export async function searchInitialImages(): Promise<{
   imageResults: SearchResult[];
@@ -45,8 +45,9 @@ export async function uploadImage(file: File): Promise<void> {
 }
 
 export async function deleteImage(id: string): Promise<void> {
-  const url = `${DELETE_API_INVOKE_URL}/image/${id}`;
-  await fetch(url, {
+  const url = new URL('/image', DELETE_API_INVOKE_URL);
+  url.searchParams.append('id', id);
+  await fetch(encodeURI(url.toString()), {
     method: 'DELETE',
   });
 }
