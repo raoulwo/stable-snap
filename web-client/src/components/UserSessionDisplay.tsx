@@ -22,7 +22,7 @@ const UserSessionDisplay: React.FC = () => {
             <Button
                 className="ml-2"
                 onClick={handleLogout}
-                variant="outline"><LogOut className="text-red-500" /></Button>
+                variant="outline"><LogOut className="text-red-500 cursor-pointer" /></Button>
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import type {FocusedImage} from "@/lib/types/focused-image.ts";
 import type {SearchResult} from "@/lib/types";
 import {createContext, useContext, useEffect, useState} from "react";
-import { searchInitialImages, searchImages } from '@/lib/api';
+import { searchInitialImages, searchImages, deleteImage } from '@/lib/api';
 
 type AppContextType = {
     isLoadingImages: boolean;
@@ -16,6 +16,7 @@ type AppContextType = {
     handleQuerySearchOfImages: (query: string) => Promise<void>;
     triggerFetchingResults: () => void;
     handleFetchOfAllImages: () => Promise<void>;
+    handleDeletionOfImage: (imageId: string) => Promise<void>
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -78,6 +79,14 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
         initialFetchOfImages();
     }
 
+    const handleDeletionOfImage = async (imageId: string) => {
+        try {
+            await deleteImage(imageId);
+        } catch(error) {
+            console.error("Error fetching images in AppContext: ", error);
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -92,7 +101,8 @@ const AppProvider = ({children}: {children: React.ReactNode}) => {
                 setSearchTags,
                 handleQuerySearchOfImages,
                 triggerFetchingResults,
-                handleFetchOfAllImages
+                handleFetchOfAllImages,
+                handleDeletionOfImage,
             }}
         >
             {children}
